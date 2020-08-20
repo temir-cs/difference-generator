@@ -1,0 +1,33 @@
+name: Check with linter on push
+# Triggers on pushes to the repository
+on: push
+
+jobs:
+  run-make-lint:
+    name: Launch 'make lint' on push
+    # The type of machine to run in
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Node versions list
+      matrix:
+        node-version: [13.x]
+
+    steps:
+      # Check-out repository under Github workspace
+    - uses: actions/checkout@v2
+    - name: Print message
+      run: echo 'Eslint checks your code...'
+      # Configure the node version used on Github-hosted runners
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install
+      # Install project
+      run: make install
+      # Add environment variables
+      env:
+        CI: true
+    - name: Run 'make lint'
+      run: make lint

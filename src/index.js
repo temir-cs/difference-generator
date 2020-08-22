@@ -3,8 +3,6 @@ import path from 'path';
 import process from 'process';
 import _ from 'lodash';
 
-// export const printCWD = () => console.log(`Current cwd: ${process.cwd()}`);
-
 export default (filepath1, filepath2) => {
   // Resolve the both paths and connect with the absolute path with process.cwd
   const absPath = toString(process.cwd);

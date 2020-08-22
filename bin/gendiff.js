@@ -3,7 +3,7 @@ import program from 'commander';
 import packageConfig from '../package.json';
 import genDiff from '../src/index.js';
 
-// Define both filepaths
+// Define variables for both filepaths
 let path1;
 let path2;
 

@@ -4,7 +4,7 @@
   "description": "Hexlet Project 2 - Temirlan A.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "npx -n --experimental-vm-modules jest"
   },
   "repository": {
     "type": "git",

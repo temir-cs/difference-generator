@@ -8,6 +8,8 @@ publish:
 lint:
 	npx eslint .
 test:
-	npx -n --experimental-vm-modules jest
+	npm test
 test-watch:
-	npx -n --experimental-vm-modules jest --watch
+	npm test -- --watch
+test-coverage:
+	npm test -- --coverage --coverageProvider=v8

@@ -11,3 +11,6 @@ rules:
 
 plugins:
   - jest
+
+parserOptions:
+  ecmaVersion: 2020

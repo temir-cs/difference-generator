@@ -1,15 +1,29 @@
-import { test, expect } from '@jest/globals';
+/* eslint-disable no-underscore-dangle */
+import { test, expect, beforeEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 import genDiff from '../src/index.js';
 
-test('Check difference between 2 JSON', () => {
-  const path1 = '../src/file1.json';
-  const path2 = '../src/file2.json';
-  expect(genDiff(path1, path2)).toEqual(`{
-   host : hexlet.io
- - timeout : 50
- + timeout : 20
- - proxy : 123.234.53.22
- - follow : false
- + verbose : true
-}`);
+// Get correct paths to current file and directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Build path to the needed file in __fixtures___
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+
+const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
+
+let path1;
+let path2;
+let expected;
+
+beforeEach(() => {
+  path1 = getFixturePath('before.json');
+  path2 = getFixturePath('after.json');
+  expected = readFile('expected');
+});
+
+test('Check difference between 2 JSON files', () => {
+  expect(genDiff(path1, path2)).toMatch(expected);
 });

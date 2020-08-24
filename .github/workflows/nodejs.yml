@@ -3,9 +3,9 @@ name: Check with linter on push
 on: push
 
 jobs:
-  run-make-lint:
-    name: Launch 'make lint' on push
-    # The type of machine to run in
+  build:
+    name: Build and test project
+    # The type of machine to run the job on
     runs-on: ubuntu-latest
 
     strategy:

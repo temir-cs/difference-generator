@@ -36,7 +36,8 @@ jobs:
       uses: paambaati/codeclimate-action@v2.6.0
       # User CodeClimate secret key
       env:
-        CC_TEST_REPORTED_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        # Specify the CodeClimate Reporter ID with Github Secrets
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
         coverageCommand: make test-coverage
         debug: true

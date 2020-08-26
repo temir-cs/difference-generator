@@ -21,7 +21,7 @@ export default (filepath) => {
       parse = yaml.safeLoad;
       break;
     default:
-      break;
+      throw new Error('Unknown extension!');
   }
   // Return parsed data
   return parse(data);

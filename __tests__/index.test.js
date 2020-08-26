@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { test, expect, beforeEach } from '@jest/globals';
+import { test, expect } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
@@ -14,16 +14,9 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-let path1;
-let path2;
-let expected;
-
-beforeEach(() => {
-  path1 = getFixturePath('before.json');
-  path2 = getFixturePath('after.json');
-  expected = readFile('expected');
-});
-
 test('Check difference between 2 JSON files', () => {
+  const path1 = getFixturePath('before.json');
+  const path2 = getFixturePath('after.json');
+  const expected = readFile('expected');
   expect(genDiff(path1, path2)).toMatch(expected);
 });

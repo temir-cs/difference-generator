@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Hexlet Project 2 - Temirlan A.",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "test": "npx -n --experimental-vm-modules jest"
   },
@@ -18,10 +19,12 @@
   "homepage": "https://github.com/temir-cs/frontend-project-lvl2#readme",
   "devDependencies": {
     "@jest/globals": "^26.4.2",
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^23.20.0",
     "jest": "^26.4.2"
   },
-  "type": "module",
   "jest": {
     "testEnvironment": "node",
     "transform": {}
@@ -31,9 +34,7 @@
   },
   "dependencies": {
     "commander": "^6.0.0",
-    "eslint": "^7.7.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.20"
   }
 }

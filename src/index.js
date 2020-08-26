@@ -1,13 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import process from 'process';
 import _ from 'lodash';
+// import parse from './parsers.js';
 
 export default (filepath1, filepath2) => {
   // Resolve the both paths and connect with the absolute path with process.cwd
-  const absPath = toString(process.cwd);
-  const path1 = path.resolve(absPath, filepath1);
-  const path2 = path.resolve(absPath, filepath2);
+  const path1 = path.resolve('./', filepath1);
+  const path2 = path.resolve('./', filepath2);
   // console.log('Path1: ', path1, 'Path2: ', path2);
 
   // Read both files

@@ -17,6 +17,7 @@ const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8'
 test('Check difference between 2 JSON files', () => {
   const path1 = getFixturePath('before.json');
   const path2 = getFixturePath('after.json');
-  const expected = readFile('expected');
+  const expected = readFile('expected.txt');
   expect(genDiff(path1, path2)).toMatch(expected);
 });
+

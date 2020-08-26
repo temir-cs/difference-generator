@@ -7,7 +7,6 @@ program.version(packageConfig.version)
   .description('Compares two configuration files and shows a difference.')
   .arguments('<filepath1> <filepath2>')
   .action((filepath1, filepath2) => {
-    // Define variables for both filepaths
     const output = genDiff(filepath1, filepath2);
     console.log(output);
   })

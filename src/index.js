@@ -1,23 +1,14 @@
-import fs from 'fs';
-import path from 'path';
 import _ from 'lodash';
+import parse from './parsers.js';
 // import parse from './parsers.js';
 
 // Resolve the both paths and read files
-const readFile = (filepath) => {
-  const fullPath = path.resolve('./', filepath);
-  return fs.readFileSync(fullPath);
-};
 
 export default (filepath1, filepath2) => {
   if (!filepath1 || !filepath2) throw new Error('One of the files is not specified!');
-  // Read both files
-  const file1 = readFile(filepath1);
-  const file2 = readFile(filepath2);
-
-  // Parse both files to -> objects
-  const data1 = JSON.parse(file1);
-  const data2 = JSON.parse(file2);
+  // Read both paths, read files and parse data
+  const data1 = parse(filepath1);
+  const data2 = parse(filepath2);
 
   // console.log for debugging purposes =)
   /*

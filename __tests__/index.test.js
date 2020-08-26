@@ -29,6 +29,13 @@ test('Check difference between 2 YAML files', () => {
   expect(genDiff(path1, path2)).toMatch(expected);
 });
 
+test('Check difference between 2 INI files', () => {
+  const path1 = getFixturePath('before.ini');
+  const path2 = getFixturePath('after.ini');
+  const expected = readFile('expected.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
+});
+
 test('Read an unexistent file', () => {
   const path1 = getFixturePath('undefined.json');
   const path2 = getFixturePath('after.json');

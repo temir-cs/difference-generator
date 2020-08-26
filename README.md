@@ -4,8 +4,5 @@
 
 <a href="https://github.com/temir-cs/frontend-project-lvl2/actions" target="_blank"><img src="https://github.com/temir-cs/frontend-project-lvl2/workflows/Build%20and%20test%20project/badge.svg"/></a>
 
-### genDiff - 2 JSON files
-[![asciicast](https://asciinema.org/a/mhEQUv1Alep1xUG2VKPsK2iob.svg)](https://asciinema.org/a/mhEQUv1Alep1xUG2VKPsK2iob)
-
-### genDiff - 2 YML files
-[![asciicast](https://asciinema.org/a/n98qgVEAJSZlydEsr89m6WHIG.svg)](https://asciinema.org/a/n98qgVEAJSZlydEsr89m6WHIG)
+### Difference Calculator (flat) - work example
+[![asciicast](https://asciinema.org/a/UYvjhlQXMe74UMWQjgLnZmLyt.svg)](https://asciinema.org/a/UYvjhlQXMe74UMWQjgLnZmLyt)

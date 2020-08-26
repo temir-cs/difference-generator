@@ -14,6 +14,17 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
+test('Read an unexistent file', () => {
+  const path1 = getFixturePath('undefined.json');
+  const path2 = getFixturePath('after.json');
+  expect(() => genDiff(path1, path2)).toThrowError();
+});
+
+test('Check with only 1 argument', () => {
+  const path1 = getFixturePath('before.json');
+  expect(() => genDiff(path1)).toThrowError();
+});
+
 test('Check difference between 2 JSON files', () => {
   const path1 = getFixturePath('before.json');
   const path2 = getFixturePath('after.json');
@@ -21,3 +32,9 @@ test('Check difference between 2 JSON files', () => {
   expect(genDiff(path1, path2)).toMatch(expected);
 });
 
+test('Check difference between 2 YAML files', () => {
+  const path1 = getFixturePath('before.yml');
+  const path2 = getFixturePath('after.yml');
+  const expected = readFile('expected.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
+});

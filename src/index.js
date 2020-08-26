@@ -3,15 +3,17 @@ import path from 'path';
 import _ from 'lodash';
 // import parse from './parsers.js';
 
-export default (filepath1, filepath2) => {
-  // Resolve the both paths and connect with the absolute path with process.cwd
-  const path1 = path.resolve('./', filepath1);
-  const path2 = path.resolve('./', filepath2);
-  // console.log('Path1: ', path1, 'Path2: ', path2);
+// Resolve the both paths and read files
+const readFile = (filepath) => {
+  const fullPath = path.resolve('./', filepath);
+  return fs.readFileSync(fullPath);
+};
 
+export default (filepath1, filepath2) => {
+  if (!filepath1 || !filepath2) throw new Error('One of the files is not specified!');
   // Read both files
-  const file1 = fs.readFileSync(path1);
-  const file2 = fs.readFileSync(path2);
+  const file1 = readFile(filepath1);
+  const file2 = readFile(filepath2);
 
   // Parse both files to -> objects
   const data1 = JSON.parse(file1);

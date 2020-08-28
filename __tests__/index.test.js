@@ -12,7 +12,6 @@ const __dirname = path.dirname(__filename);
 
 // Build path to the needed file in __fixtures___
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 test('Check difference between 2 JSON files', () => {
@@ -50,4 +49,11 @@ test('Check with only 1 argument', () => {
 test('Parse file with unknown extension', () => {
   const pathToNoExtensionFile = getFixturePath('expected.txt');
   expect(() => parse(pathToNoExtensionFile)).toThrowError();
+});
+
+test('Check difference between 2 nested JSONs', () => {
+  const path1 = getFixturePath('beforeNested.json');
+  const path2 = getFixturePath('afterNested.json');
+  const expected = readFile('expectedNested.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
 });

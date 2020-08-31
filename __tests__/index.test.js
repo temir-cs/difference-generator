@@ -14,27 +14,6 @@ const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-test('Check difference between 2 JSON files', () => {
-  const path1 = getFixturePath('before.json');
-  const path2 = getFixturePath('after.json');
-  const expected = readFile('expected.txt');
-  expect(genDiff(path1, path2)).toMatch(expected);
-});
-
-test('Check difference between 2 YAML files', () => {
-  const path1 = getFixturePath('before.yml');
-  const path2 = getFixturePath('after.yml');
-  const expected = readFile('expected.txt');
-  expect(genDiff(path1, path2)).toMatch(expected);
-});
-
-test('Check difference between 2 INI files', () => {
-  const path1 = getFixturePath('before.ini');
-  const path2 = getFixturePath('after.ini');
-  const expected = readFile('expected.txt');
-  expect(genDiff(path1, path2)).toMatch(expected);
-});
-
 test('Read an unexistent file', () => {
   const path1 = getFixturePath('undefined.json');
   const path2 = getFixturePath('after.json');
@@ -51,9 +30,30 @@ test('Parse file with unknown extension', () => {
   expect(() => parse(pathToNoExtensionFile)).toThrowError();
 });
 
+test('Check difference between 2 flat JSON files', () => {
+  const path1 = getFixturePath('before.json');
+  const path2 = getFixturePath('after.json');
+  const expected = readFile('expected.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
+});
+
+test('Check difference between 2 flat YAML files', () => {
+  const path1 = getFixturePath('before.yml');
+  const path2 = getFixturePath('after.yml');
+  const expected = readFile('expected.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
+});
+
+test('Check difference between 2 flat INI files', () => {
+  const path1 = getFixturePath('before.ini');
+  const path2 = getFixturePath('after.ini');
+  const expected = readFile('expected.txt');
+  expect(genDiff(path1, path2)).toMatch(expected);
+});
+
 test('Check difference between 2 nested JSONs', () => {
-  const path1 = getFixturePath('beforeNested.json');
-  const path2 = getFixturePath('afterNested.json');
-  const expected = readFile('expectedNested.txt');
+  const path1 = getFixturePath('before-nested.json');
+  const path2 = getFixturePath('after-nested.json');
+  const expected = readFile('expected-nested.txt');
   expect(genDiff(path1, path2)).toMatch(expected);
 });

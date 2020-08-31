@@ -21,6 +21,6 @@ export default (filepath) => {
     case '.ini':
       return ini.parse(data);
     default:
-      throw new Error('Unknown extension!');
+      throw new Error('Unknown file extension!');
   }
 };

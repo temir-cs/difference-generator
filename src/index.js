@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import parse from './parsers.js';
-// import parse from './parsers.js';
+import formatDiff from './formatters/index.js';
 
 // Resolve the both paths and read files
 
@@ -38,38 +38,15 @@ const buildDiff = (data1, data2) => {
   return iter(united);
 };
 
-// format an object without analysing
-const formatObject = (obj) => Object.keys(obj).map((key) => [prefixes.none, key, obj[key]]);
-
-// Formatter that builds an output string from Diff
-const stylish = (diffArr) => {
-  const iter = (arr, indentSize) => {
-    const indent = ' '.repeat(indentSize);
-    const nextIndentSize = indentSize + 4;
-    const result = arr.map((item) => {
-      const [prefix, key, value] = item;
-      if (Array.isArray(value)) {
-        return `${indent}${prefix} ${key}: ${iter(value, nextIndentSize)}`;
-      }
-      if (typeof value === 'object') {
-        return `${indent}${prefix} ${key}: ${iter(formatObject(value), nextIndentSize)}`;
-      }
-      return `${indent}${prefix} ${key}: ${value}`;
-    }).join('\n');
-    return ['{', result, `${indent.substr(0, indent.length - 2)}}`].join('\n');
-  };
-  return iter(diffArr, 2);
-};
-
-export default (filepath1, filepath2) => {
+export default (filepath1, filepath2, format) => {
   if (!filepath1 || !filepath2) throw new Error('One of the files is not specified!');
   // Read both paths, read files and parse data
   const data1 = parse(filepath1);
   const data2 = parse(filepath2);
 
-  // build a Diff from the given data
+  // build a diff from the given data
   const diff = buildDiff(data1, data2);
 
-  // return formatted string
-  return stylish(diff);
+  // return a formatted string
+  return formatDiff(format, diff);
 };

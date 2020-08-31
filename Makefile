@@ -8,7 +8,7 @@ gendiff-yml:
 gendiff-ini:
 	node --experimental-json-modules bin/gendiff.js ./__fixtures__/before.ini ./__fixtures__/after.ini
 gendiff-json-nested:
-	node --experimental-json-modules bin/gendiff.js ./__fixtures__/beforeNested.json ./__fixtures__/afterNested.json
+	node --experimental-json-modules bin/gendiff.js ./__fixtures__/before-nested.json ./__fixtures__/after-nested.json
 publish:
 	npm publish --dry-run
 lint:

@@ -57,3 +57,10 @@ test('Check difference between 2 nested JSONs', () => {
   const expected = readFile('expected-nested.txt');
   expect(genDiff(path1, path2)).toMatch(expected);
 });
+
+test('Check difference between 2 nested JSONs with plain output', () => {
+  const path1 = getFixturePath('before-nested.json');
+  const path2 = getFixturePath('after-nested.json');
+  const expected = readFile('expected-plain-nested.txt');
+  expect(genDiff(path1, path2, 'plain')).toMatch(expected);
+});

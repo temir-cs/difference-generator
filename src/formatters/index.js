@@ -8,6 +8,6 @@ export default (formatterName, diff) => {
     case 'plain':
       return plain(diff);
     default:
-      throw new Error('Unknown formatter!');
+      return stylish(diff);
   }
 };

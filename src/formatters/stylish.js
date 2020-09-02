@@ -6,15 +6,17 @@ const stylish = (diffArr) => {
     const nextIndentSize = indentSize + 4;
     const result = arr.map((item) => {
       const [prefix, key, value] = item;
+      const beginning = `${indent}${prefix} ${key}: `;
+      // if a value is compex and was analyzed - means if it is an Array
       if (Array.isArray(value)) {
-        return `${indent}${prefix} ${key}: ${iter(value, nextIndentSize)}`;
+        return `${beginning}${iter(value, nextIndentSize)}`;
       }
+      // if a value is complex and was not analyzed - means if it is an object
       if (typeof value === 'object') {
-        // format an object without analysing
-        const formatted = Object.keys(value).map((k) => [' ', key, value[k]]);
-        return `${indent}${prefix} ${key}: ${iter(formatted, nextIndentSize)}`;
+        const formatted = Object.keys(value).map((k) => [' ', k, value[k]]);
+        return `${beginning}${iter(formatted, nextIndentSize)}`;
       }
-      return `${indent}${prefix} ${key}: ${value}`;
+      return `${beginning}${value}`;
     }).join('\n');
     return ['{', result, `${indent.substr(0, indent.length - 2)}}`].join('\n');
   };

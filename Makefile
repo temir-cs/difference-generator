@@ -3,6 +3,8 @@ install:
 	npm install
 gendiff-json:
 	node --experimental-json-modules bin/gendiff.js ./__fixtures__/before.json ./__fixtures__/after.json
+gendiff-json-flat-plain:
+	node --experimental-json-modules bin/gendiff.js --format plain ./__fixtures__/before.json ./__fixtures__/after.json
 gendiff-yml:
 	node --experimental-json-modules bin/gendiff.js ./__fixtures__/before.yml ./__fixtures__/after.yml
 gendiff-ini:

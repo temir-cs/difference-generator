@@ -1,6 +1,6 @@
 // Plain text formatter
 
-// get the proper string based on the type of value
+// format string based on the type of value
 const formatValue = (value) => {
   switch (typeof value) {
     case 'object':
@@ -12,42 +12,29 @@ const formatValue = (value) => {
   }
 };
 
-const plain = (diffArr) => {
+const plain = (diff) => {
   const iter = (arr, path) => {
-    const result = arr.reduce((acc, current, index, array) => {
-      const [prefix, key, value] = current;
-      // add current key to path and build a path string
-      const currentPath = [...path, key];
+    const result = arr.reduce((acc, current) => {
+      // add name of a current element to path and build a path string
+      const currentPath = [...path, current.name];
       const pathStr = currentPath.join('.');
-      // if a value has children - check it recursively
-      if (Array.isArray(value)) {
-        return [...acc, iter(value, currentPath)];
+      const head = `Property '${pathStr}' was `;
+      switch (current.status) {
+        case 'nested':
+          return [...acc, iter(current.children, currentPath)];
+        case 'updated':
+          return [...acc, `${head}updated. From ${formatValue(current.before)} to ${formatValue(current.after)}`];
+        case 'added':
+          return [...acc, `${head}added with value: ${formatValue(current.value)}`];
+        case 'removed':
+          return [...acc, `${head}removed`];
+        default:
+          // if a value was unchanged
+          return acc;
       }
-      const prev = array[index - 1];
-      // if a previous value has the same key - skip
-      // This is to avoid 'added value' duplication after 'updated value'
-      if (prev) {
-        const [, prevKey] = prev;
-        if (key === prevKey) return acc;
-      }
-      const next = array[index + 1];
-      // if the NEXT value has the SAME key - means it was UPDATED
-      if (next) {
-        const [, nextKey, nextValue] = next;
-        if (key === nextKey) {
-          return [...acc, `Property '${pathStr}' was updated. From ${formatValue(value)} to ${formatValue(nextValue)}`];
-        }
-      }
-      // If a value was added / removed
-      if (prefix === '+' || prefix === '-') {
-        const ending = prefix === '+' ? `added with value: ${formatValue(value)}` : 'removed';
-        return [...acc, `Property '${pathStr}' was ${ending}`];
-      }
-      // if a value was unchanged - skip
-      return acc;
     }, []);
     return result.join('\n');
   };
-  return iter(diffArr, []);
+  return iter(diff, []);
 };
 export default plain;

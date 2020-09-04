@@ -10,6 +10,47 @@ const prefixes = {
   removed: '-',
 };
 
+const newBuildDiff = (data1, data2) => {
+  const united = _.union(Object.keys(data1), Object.keys(data2)).sort();
+  const iter = (arr) => arr.reduce((acc, key) => {
+    if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
+      return [...acc, {
+        name: key,
+        children: newBuildDiff(data1[key], data2[key]),
+        status: 'nested',
+      }];
+    }
+    if (!_.has(data1, key)) {
+      return [...acc, {
+        name: key,
+        value: data2[key],
+        status: 'added',
+      }];
+    }
+    if (!_.has(data2, key)) {
+      return [...acc, {
+        name: key,
+        value: data1[key],
+        status: 'removed',
+      }];
+    }
+    if (data1[key] !== data2[key]) {
+      return [...acc, {
+        name: key,
+        before: data1[key],
+        after: data2[key],
+        status: 'updated',
+      }];
+    }
+    return [...acc, {
+      name: key,
+      value: data1[key],
+      status: 'unchanged',
+    }];
+  }, []);
+  return iter(united);
+};
+
 // Build a diff from both files
 const buildDiff = (data1, data2) => {
   // build and sort a union array from keys
@@ -45,7 +86,8 @@ export default (filepath1, filepath2, format) => {
   const data2 = parse(filepath2);
 
   // build a diff from the given data
-  const diff = buildDiff(data1, data2);
+  const diff = newBuildDiff(data1, data2);
+  // console.log(diff);
 
   // return a formatted string
   return formatDiff(format, diff);

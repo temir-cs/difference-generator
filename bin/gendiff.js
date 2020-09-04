@@ -14,5 +14,3 @@ program
   });
 
 program.parse(process.argv);
-
-// console.log('Welcome to GenDiff App!');

@@ -2,24 +2,21 @@ import _ from 'lodash';
 import parse from './parsers.js';
 import formatDiff from './formatters/index.js';
 
-// Resolve the both paths and read files
-
-const prefixes = {
-  none: ' ',
-  added: '+',
-  removed: '-',
-};
-
-const newBuildDiff = (data1, data2) => {
+// Build a diff from both files
+const buildDiff = (data1, data2) => {
+  // build and sort a union array of keys from two files
   const united = _.union(Object.keys(data1), Object.keys(data2)).sort();
   const iter = (arr) => arr.reduce((acc, key) => {
+    // if both values are objects -> recursively go deeper and build a children tree
     if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
       return [...acc, {
         name: key,
-        children: newBuildDiff(data1[key], data2[key]),
+        children: buildDiff(data1[key], data2[key]),
         status: 'nested',
       }];
     }
+    // if a key not present in file1
+    // means it was ADDED
     if (!_.has(data1, key)) {
       return [...acc, {
         name: key,
@@ -27,6 +24,8 @@ const newBuildDiff = (data1, data2) => {
         status: 'added',
       }];
     }
+    // if a key not present in file2
+    // means it was REMOVED
     if (!_.has(data2, key)) {
       return [...acc, {
         name: key,
@@ -34,6 +33,8 @@ const newBuildDiff = (data1, data2) => {
         status: 'removed',
       }];
     }
+    // if a key is present in both files, but the value was changed
+    // means it was UPDATED
     if (data1[key] !== data2[key]) {
       return [...acc, {
         name: key,
@@ -42,39 +43,13 @@ const newBuildDiff = (data1, data2) => {
         status: 'updated',
       }];
     }
+    // if key and value are same in both files
+    // means it was UNCHANGED
     return [...acc, {
       name: key,
       value: data1[key],
       status: 'unchanged',
     }];
-  }, []);
-  return iter(united);
-};
-
-// Build a diff from both files
-const buildDiff = (data1, data2) => {
-  // build and sort a union array from keys
-  const united = _.union(Object.keys(data1), Object.keys(data2)).sort();
-  // recursively traverse the united array
-  const iter = (arr) => arr.reduce((acc, key) => {
-    // if both values are objects -> recursively go deeper
-    if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
-      return [...acc, [prefixes.none, key, buildDiff(data1[key], data2[key])]];
-    }
-    // if a key not present in file1 was added to file2
-    if (!_.has(data1, key)) {
-      return [...acc, [prefixes.added, key, data2[key]]];
-    }
-    // if a key present in file1 was removed in file2
-    if (!_.has(data2, key)) {
-      return [...acc, [prefixes.removed, key, data1[key]]];
-    }
-    // if a key remains the same, but the value was changed
-    if (data1[key] !== data2[key]) {
-      return [...acc, [prefixes.removed, key, data1[key]], [prefixes.added, key, data2[key]]];
-    }
-    // if key and value are same for both files
-    return [...acc, [prefixes.none, key, data1[key]]];
   }, []);
   return iter(united);
 };
@@ -86,7 +61,7 @@ export default (filepath1, filepath2, format) => {
   const data2 = parse(filepath2);
 
   // build a diff from the given data
-  const diff = newBuildDiff(data1, data2);
+  const diff = buildDiff(data1, data2);
   // console.log(diff);
 
   // return a formatted string

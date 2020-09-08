@@ -11,6 +11,6 @@ export default (formatterName, diff) => {
     case 'json':
       return json(diff);
     default:
-      return stylish(diff);
+      throw new Error('Unknown formatter!');
   }
 };

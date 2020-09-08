@@ -10,20 +10,23 @@ const prefixes = {
 };
 
 const formatIfObj = (item, indentSize) => {
-  const fixedIndent = 4;
-  const indentStr = ' '.repeat(indentSize - 2);
-  if (typeof item === 'object') {
-    return _.trimStart(JSON.stringify(item, null, fixedIndent)
-      .split('')
-      // remove JSON.stringify chars like " and ,
-      .filter((char) => char !== '"' && char !== ',')
-      .join('')
-      .split('\n')
-      // add dynamic indent
-      .map((el) => `${indentStr}${el}`)
-      .join('\n'));
+  const indentStr = ' '.repeat(indentSize);
+  if (typeof item !== 'object') {
+    return item;
   }
-  return item;
+  const result = Object.entries(item).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, indentSize + 4)}`);
+  return ['{', ...result, `${indentStr.substr(0, indentStr.length - 2)}}`].join('\n');
+
+  // Alternative method
+  /* _.trimStart(JSON.stringify(item, null, fixedIndent)
+    .split('')
+    // remove JSON.stringify chars like " and ,
+    .filter((char) => char !== '"' && char !== ',')
+    .join('')
+    .split('\n')
+    // add dynamic indent
+    .map((el) => `${indentStr}${el}`)
+    .join('\n')); */
 };
 
 const stylish = (diff) => {
@@ -33,21 +36,21 @@ const stylish = (diff) => {
   const iter = (arr, indentSize) => {
     const indentStr = ' '.repeat(indentSize);
     const nextIndent = indentSize + 4;
-    const result = arr.reduce((acc, current) => {
+    const result = _.flatMap(arr, (item) => {
       // select prefix based on a current status
-      const head = `${indentStr}${prefixes[current.status]} ${current.name}: `;
+      const head = `${indentStr}${prefixes[item.status]} ${item.name}: `;
       // if value is nested - traverse it recursively
-      if (current.status === 'nested') {
-        return [...acc, `${head}${iter(current.children, nextIndent)}`];
+      if (item.status === 'nested') {
+        return `${head}${iter(item.children, nextIndent)}`;
       }
       // if value was updated - add 'removed' and 'added' strings one after another
-      if (current.status === 'updated') {
-        return [...acc, `${indentStr}${prefixes.removed} ${current.name}: ${formatIfObj(current.before, nextIndent)}`,
-          `${indentStr}${prefixes.added} ${current.name}: ${formatIfObj(current.after, nextIndent)}`];
+      if (item.status === 'updated') {
+        return [`${indentStr}${prefixes.removed} ${item.name}: ${formatIfObj(item.before, nextIndent)}`,
+          `${indentStr}${prefixes.added} ${item.name}: ${formatIfObj(item.after, nextIndent)}`];
       }
-      return [...acc, `${head}${formatIfObj(current.value, nextIndent)}`];
-    }, []).join('\n');
-    return ['{', result, `${indentStr.substr(0, indentStr.length - 2)}}`].join('\n');
+      return `${head}${formatIfObj(item.value, nextIndent)}`;
+    });
+    return ['{', ...result, `${indentStr.substr(0, indentStr.length - 2)}}`].join('\n');
   };
   return iter(diff, indent);
 };

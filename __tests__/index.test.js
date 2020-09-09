@@ -1,17 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { test, expect } from '@jest/globals';
-import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 import genDiff from '../src/index.js';
 import parse from '../src/parsers.js';
 
-// Get correct paths to current file and directory
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Build path to the needed file in __fixtures___
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const getFixturePath = (filename) => path.resolve('./', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 test('Read an unexistent file', () => {

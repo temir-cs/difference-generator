@@ -1,5 +1,4 @@
 // Stylish formatter
-import _ from 'lodash';
 
 // prefixes that are selected based on status
 const prefixes = {
@@ -14,8 +13,9 @@ const formatIfObj = (item, indentSize) => {
   if (typeof item !== 'object') {
     return item;
   }
-  const result = Object.entries(item).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, indentSize + 4)}`);
-  return ['{', ...result, `${indentStr.substr(0, indentStr.length - 2)}}`].join('\n');
+  const result = Object.entries(item).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, indentSize + 4)}`)
+    .join('\n');
+  return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
 
   // Alternative method
   /* _.trimStart(JSON.stringify(item, null, fixedIndent)
@@ -36,7 +36,7 @@ const stylish = (diff) => {
   const iter = (arr, indentSize) => {
     const indentStr = ' '.repeat(indentSize);
     const nextIndent = indentSize + 4;
-    const result = _.flatMap(arr, (item) => {
+    const result = arr.map((item) => {
       // select prefix based on a current status
       const head = `${indentStr}${prefixes[item.status]} ${item.name}: `;
       // if value is nested - traverse it recursively
@@ -45,12 +45,11 @@ const stylish = (diff) => {
       }
       // if value was updated - add 'removed' and 'added' strings one after another
       if (item.status === 'updated') {
-        return [`${indentStr}${prefixes.removed} ${item.name}: ${formatIfObj(item.before, nextIndent)}`,
-          `${indentStr}${prefixes.added} ${item.name}: ${formatIfObj(item.after, nextIndent)}`];
+        return `${indentStr}${prefixes.removed} ${item.name}: ${formatIfObj(item.before, nextIndent)}\n${indentStr}${prefixes.added} ${item.name}: ${formatIfObj(item.after, nextIndent)}`;
       }
       return `${head}${formatIfObj(item.value, nextIndent)}`;
-    });
-    return ['{', ...result, `${indentStr.substr(0, indentStr.length - 2)}}`].join('\n');
+    }).join('\n');
+    return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
   };
   return iter(diff, indent);
 };

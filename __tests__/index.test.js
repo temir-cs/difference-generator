@@ -3,7 +3,6 @@ import { test, expect } from '@jest/globals';
 import path from 'path';
 import fs from 'fs';
 import genDiff from '../src/index.js';
-import parse from '../src/parsers.js';
 
 // Build path to the needed file in __fixtures___
 const getFixturePath = (filename) => path.resolve('./', '__fixtures__', filename);
@@ -18,11 +17,6 @@ test('Read an unexistent file', () => {
 test('Check with only 1 argument', () => {
   const path1 = getFixturePath('before-flat.json');
   expect(() => genDiff(path1)).toThrowError();
-});
-
-test('Parse file with unknown extension', () => {
-  const pathToNoExtensionFile = getFixturePath('expected.txt');
-  expect(() => parse(pathToNoExtensionFile)).toThrowError();
 });
 
 test('Check difference between 2 flat JSON files', () => {

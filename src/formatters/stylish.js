@@ -8,17 +8,20 @@ const prefixes = {
   nested: ' ',
 };
 
-const formatIfObj = (item, indentSize) => {
-  const indentStr = ' '.repeat(indentSize);
-  if (typeof item !== 'object') {
-    return item;
+// standard indent size is 4
+const indent = 4;
+
+const formatIfObj = (entry, depth) => {
+  const indentStr = ' '.repeat(indent * (depth + 1) - 2);
+  if (typeof entry !== 'object') {
+    return entry;
   }
-  const result = Object.entries(item).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, indentSize + 4)}`)
+  const result = Object.entries(entry).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, depth + 1)}`)
     .join('\n');
   return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
 
   // Alternative method
-  /* _.trimStart(JSON.stringify(item, null, fixedIndent)
+  /* _.trimStart(JSON.stringify(item, null, 4)
     .split('')
     // remove JSON.stringify chars like " and ,
     .filter((char) => char !== '"' && char !== ',')
@@ -30,27 +33,27 @@ const formatIfObj = (item, indentSize) => {
 };
 
 const stylish = (diff) => {
-  // since (prefix + space before name) = 2 spaces, the initial indent is set to 2
-  // therefore overall indent is equal 4
-  const indent = 2;
-  const iter = (arr, indentSize) => {
-    const indentStr = ' '.repeat(indentSize);
-    const nextIndent = indentSize + 4;
-    const result = arr.map((item) => {
+  const iter = (entries, depth) => {
+    // in order to compensate for 'prefix + space' before name we use '-2' in .repeat()
+    const indentStr = ' '.repeat(indent * (depth + 1) - 2);
+    const result = entries.map((entry) => {
       // select prefix based on a current status
-      const head = `${indentStr}${prefixes[item.status]} ${item.name}: `;
+      const head = `${indentStr}${prefixes[entry.status]} ${entry.name}: `;
       // if value is nested - traverse it recursively
-      if (item.status === 'nested') {
-        return `${head}${iter(item.children, nextIndent)}`;
+      if (entry.status === 'nested') {
+        return `${head}${iter(entry.children, depth + 1)}`;
       }
-      // if value was updated - add 'removed' and 'added' strings one after another
-      if (item.status === 'updated') {
-        return `${indentStr}${prefixes.removed} ${item.name}: ${formatIfObj(item.before, nextIndent)}\n${indentStr}${prefixes.added} ${item.name}: ${formatIfObj(item.after, nextIndent)}`;
+      // if value was updated - add 'removed' and 'added' lines one after another
+      if (entry.status === 'updated') {
+        // can't use head here, since we need two separate lines
+        const removedLine = `${indentStr}${prefixes.removed} ${entry.name}: ${formatIfObj(entry.before, depth + 1)}`;
+        const addedLine = `${indentStr}${prefixes.added} ${entry.name}: ${formatIfObj(entry.after, depth + 1)}`;
+        return `${removedLine}\n${addedLine}`;
       }
-      return `${head}${formatIfObj(item.value, nextIndent)}`;
+      return `${head}${formatIfObj(entry.value, depth + 1)}`;
     }).join('\n');
     return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
   };
-  return iter(diff, indent);
+  return iter(diff, 0);
 };
 export default stylish;

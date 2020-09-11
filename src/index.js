@@ -20,14 +20,6 @@ const buildDiff = (data1, data2) => {
   // build and sort a union array of keys from two files
   const united = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
   const iter = (arr) => arr.map((key) => {
-    // if both values are objects -> recursively go deeper and build a children tree
-    if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
-      return {
-        name: key,
-        children: buildDiff(data1[key], data2[key]),
-        status: 'nested',
-      };
-    }
     // if a key not present in file1
     // means it was ADDED
     if (!_.has(data1, key)) {
@@ -44,6 +36,14 @@ const buildDiff = (data1, data2) => {
         name: key,
         value: data1[key],
         status: 'removed',
+      };
+    }
+    // if both values are objects -> recursively go deeper and build a children tree
+    if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
+      return {
+        name: key,
+        children: buildDiff(data1[key], data2[key]),
+        status: 'nested',
       };
     }
     // if a key is present in both files, but the value was changed
@@ -67,8 +67,7 @@ const buildDiff = (data1, data2) => {
   return iter(united);
 };
 
-export default (filepath1, filepath2, format) => {
-  if (!filepath1 || !filepath2) throw new Error('One of the files is not specified!');
+export default (filepath1, filepath2, format = 'stylish') => {
   // Read both paths, read files and parse data
 
   const [data1, ext1] = getData(filepath1);

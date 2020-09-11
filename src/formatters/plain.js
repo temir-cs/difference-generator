@@ -2,37 +2,39 @@
 
 // format string based on the type of value
 const formatValue = (value) => {
-  switch (typeof value) {
-    case 'object':
-      return '[complex value]';
-    case 'string':
-      return `'${value}'`;
-    default:
-      return value;
-  }
+  const values = {
+    object: '[complex value]',
+    string: `'${value}'`,
+    boolean: value,
+  };
+  return values[typeof value];
+};
+
+// build a full sentence based on the item status
+const makeSentence = (beginning, item) => {
+  const endings = {
+    updated: `updated. From ${formatValue(item.before)} to ${formatValue(item.after)}`,
+    added: `added with value: ${formatValue(item.value)}`,
+    removed: 'removed',
+  };
+  const result = `${beginning}${endings[item.status]}`;
+  return result;
 };
 
 const plain = (diff) => {
-  const iter = (arr, path) => {
-    const result = arr.reduce((acc, current) => {
-      // add name of a current element to path and build a path string
-      const currentPath = [...path, current.name];
-      const pathStr = currentPath.join('.');
-      const head = `Property '${pathStr}' was `;
-      switch (current.status) {
-        case 'nested':
-          return [...acc, iter(current.children, currentPath)];
-        case 'updated':
-          return [...acc, `${head}updated. From ${formatValue(current.before)} to ${formatValue(current.after)}`];
-        case 'added':
-          return [...acc, `${head}added with value: ${formatValue(current.value)}`];
-        case 'removed':
-          return [...acc, `${head}removed`];
-        default:
-          // if a value was unchanged
-          return acc;
-      }
-    }, []);
+  const iter = (entries, path) => {
+    // first filter items that are unchanged - we don't need them
+    const result = entries.filter((entry) => entry.status !== 'unchanged')
+      .map((entry) => {
+        // add name of a current element to path and build a path string
+        const currentPath = [...path, entry.name];
+        const pathStr = currentPath.join('.');
+        const head = `Property '${pathStr}' was `;
+        // if a current item is a tree - traverse it recursively
+        // otherwise - build a sentence
+        const sentence = entry.status === 'nested' ? iter(entry.children, currentPath) : makeSentence(head, entry);
+        return sentence;
+      });
     return result.join('\n');
   };
   return iter(diff, []);

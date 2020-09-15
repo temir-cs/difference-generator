@@ -11,6 +11,9 @@ const prefixes = {
 // standard indent size is 4
 const indent = 4;
 
+// build an indent space
+const buildIndent = (depth, backspace, symbol = ' ') => symbol.repeat(indent * (depth + 1) - backspace);
+
 const formatIfObj = (entry, depth) => {
   const indentStr = ' '.repeat(indent * (depth + 1) - 2);
   if (typeof entry !== 'object') {
@@ -18,7 +21,7 @@ const formatIfObj = (entry, depth) => {
   }
   const result = Object.entries(entry).map(([key, value]) => `${indentStr}${prefixes.unchanged} ${key}: ${formatIfObj(value, depth + 1)}`)
     .join('\n');
-  return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
+  return `{\n${result}\n${buildIndent(depth, 4)}}`;
 
   // Alternative method
   /* _.trimStart(JSON.stringify(item, null, 4)
@@ -35,7 +38,7 @@ const formatIfObj = (entry, depth) => {
 const stylish = (diff) => {
   const iter = (entries, depth) => {
     // in order to compensate for 'prefix + space' before name we use '-2' in .repeat()
-    const indentStr = ' '.repeat(indent * (depth + 1) - 2);
+    const indentStr = buildIndent(depth, 2);
     const result = entries.map((entry) => {
       // select prefix based on a current status
       const head = `${indentStr}${prefixes[entry.status]} ${entry.name}: `;
@@ -52,7 +55,7 @@ const stylish = (diff) => {
       }
       return `${head}${formatIfObj(entry.value, depth + 1)}`;
     }).join('\n');
-    return `{\n${result}\n${indentStr.substr(0, indentStr.length - 2)}}`;
+    return `{\n${result}\n${buildIndent(depth, 4)}}`;
   };
   return iter(diff, 0);
 };

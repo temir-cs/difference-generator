@@ -37,7 +37,7 @@ const formatIfObj = (entry, depth) => {
 
 const stylish = (diff) => {
   const iter = (entries, depth) => {
-    // in order to compensate for 'prefix + space' before name we use '-2' in .repeat()
+    // in order to compensate for 'prefix + space' before name we use 2 as a backspace
     const indentStr = buildIndent(depth, 2);
     const result = entries.map((entry) => {
       // select prefix based on a current status

@@ -18,8 +18,8 @@ const getData = (filepath) => {
 // Build a diff from both files
 const buildDiff = (data1, data2) => {
   // build and sort a union array of keys from two files
-  const united = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
-  const iter = (keys) => keys.map((key) => {
+  const unitedKeys = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
+  return unitedKeys.map((key) => {
     // make an entry object and add key as name
     const entry = { name: key };
     // if a key not present in file1
@@ -45,7 +45,6 @@ const buildDiff = (data1, data2) => {
     // means it was UNCHANGED
     return _.assign(entry, { value: data1[key], status: 'unchanged' });
   });
-  return iter(united);
 };
 
 export default (filepath1, filepath2, format = 'stylish') => {

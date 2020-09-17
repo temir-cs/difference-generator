@@ -33,7 +33,6 @@ const plain = (diff) => {
       // add name of a current element to path and build a path string
       const currentName = path === '' ? `${entry.name}` : `${path}.${entry.name}`;
       const sentence = mapping[entry.status](currentName, entry, iter);
-      // console.log('Sentence: ', sentence);
       return sentence;
     });
     return result.join('\n');

@@ -19,50 +19,31 @@ const getData = (filepath) => {
 const buildDiff = (data1, data2) => {
   // build and sort a union array of keys from two files
   const united = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
-  const iter = (arr) => arr.map((key) => {
+  const iter = (keys) => keys.map((key) => {
+    // make an entry object and add key as name
+    const entry = { name: key };
     // if a key not present in file1
     // means it was ADDED
     if (!_.has(data1, key)) {
-      return {
-        name: key,
-        value: data2[key],
-        status: 'added',
-      };
+      return _.assign(entry, { value: data2[key], status: 'added' });
     }
     // if a key not present in file2
     // means it was REMOVED
     if (!_.has(data2, key)) {
-      return {
-        name: key,
-        value: data1[key],
-        status: 'removed',
-      };
+      return _.assign(entry, { value: data1[key], status: 'removed' });
     }
     // if both values are objects -> recursively go deeper and build a children tree
     if (typeof data1[key] === 'object' && typeof data2[key] === 'object') {
-      return {
-        name: key,
-        children: buildDiff(data1[key], data2[key]),
-        status: 'nested',
-      };
+      return _.assign(entry, { children: buildDiff(data1[key], data2[key]), status: 'nested' });
     }
     // if a key is present in both files, but the value was changed
     // means it was UPDATED
     if (data1[key] !== data2[key]) {
-      return {
-        name: key,
-        before: data1[key],
-        after: data2[key],
-        status: 'updated',
-      };
+      return _.assign(entry, { before: data1[key], after: data2[key], status: 'updated' });
     }
     // if key and value are same in both files
     // means it was UNCHANGED
-    return {
-      name: key,
-      value: data1[key],
-      status: 'unchanged',
-    };
+    return _.assign({ value: data1[key], status: 'unchanged' });
   });
   return iter(united);
 };

@@ -32,8 +32,8 @@ const plain = (diff) => {
     const result = _.flatMap(entries, (entry) => {
       // add name of a current element to path and build a path string
       const currentName = path === '' ? `${entry.name}` : `${path}.${entry.name}`;
-      const sentence = mapping[entry.status](currentName, entry, iter);
-      return sentence;
+      // build and return a sentence
+      return mapping[entry.status](currentName, entry, iter);
     });
     return result.join('\n');
   };

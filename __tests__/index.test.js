@@ -19,6 +19,12 @@ test('Check with only 1 argument', () => {
   expect(() => genDiff(path1)).toThrowError();
 });
 
+test('Check with an unknown formatter', () => {
+  const path1 = getFixturePath('before.json');
+  const path2 = getFixturePath('after.json');
+  expect(() => genDiff(path1, path2, 'fancy')).toThrowError();
+});
+
 test('Check difference between 2 flat JSON files', () => {
   const path1 = getFixturePath('before-flat.json');
   const path2 = getFixturePath('after-flat.json');

@@ -43,7 +43,7 @@ const buildDiff = (data1, data2) => {
     }
     // if key and value are same in both files
     // means it was UNCHANGED
-    return _.assign({ value: data1[key], status: 'unchanged' });
+    return _.assign(entry, { value: data1[key], status: 'unchanged' });
   });
   return iter(united);
 };

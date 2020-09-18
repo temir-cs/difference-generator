@@ -17,11 +17,11 @@ const formatValue = (value) => {
 // select a proper method based on an entry status
 const mapping = {
   // if a current item is a tree - traverse it recursively
-  nested: (name, entry, iter) => iter(entry.children, name),
+  nested: (path, entry, iter) => iter(entry.children, path),
   // build a sentence
-  updated: (name, entry) => `Property '${name}' was updated. From ${formatValue(entry.before)} to ${formatValue(entry.after)}`,
-  added: (name, entry) => `Property '${name}' was added with value: ${formatValue(entry.value)}`,
-  removed: (name) => `Property '${name}' was removed`,
+  updated: (path, entry) => `Property '${path.join('.')}' was updated. From ${formatValue(entry.before)} to ${formatValue(entry.after)}`,
+  added: (path, entry) => `Property '${path.join('.')}' was added with value: ${formatValue(entry.value)}`,
+  removed: (path) => `Property '${path.join('.')}' was removed`,
   // if status is unchanged - return an empty array that will be flattened by flatMap()
   unchanged: () => [],
 };
@@ -29,14 +29,10 @@ const mapping = {
 const plain = (diff) => {
   const iter = (entries, path) => {
     // flatMap needed to handle values with 'unchanged' status
-    const result = _.flatMap(entries, (entry) => {
-      // add name of a current element to path and build a path string
-      const currentName = path === '' ? `${entry.name}` : `${path}.${entry.name}`;
-      // build and return a sentence
-      return mapping[entry.status](currentName, entry, iter);
-    });
+    const result = _.flatMap(entries, (entry) => mapping[entry.status]([...path, entry.name],
+      entry, iter));
     return result.join('\n');
   };
-  return iter(diff, '');
+  return iter(diff, []);
 };
 export default plain;

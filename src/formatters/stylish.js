@@ -1,10 +1,7 @@
 // Stylish formatter
 
-// standard indent size is 4
-const indent = 4;
-
-// build an indent space
-const makeIndent = (depth, symbol = ' ') => symbol.repeat(indent * depth);
+// build an indent space (default is 4 spaces)
+const makeIndent = (depth, tab = '    ') => tab.repeat(depth);
 
 const formatIfObj = (entry, depth) => {
   if (typeof entry !== 'object') {
